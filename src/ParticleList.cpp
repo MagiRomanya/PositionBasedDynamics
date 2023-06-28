@@ -4,6 +4,7 @@
 #include "constraint.hpp"
 #include "raylib.h"
 #include "ParticleParticleCollisionConstraint.hpp"
+#include "WallConstraint.hpp"
 
 ParticleList::ParticleList(std::vector<Particle> particles) {
     _particles = particles;
@@ -84,21 +85,26 @@ Eigen::SparseMatrix<float> ParticleList::getInvMass() {
     return _inv_mass;
 }
 
+void ParticleList::updateVelocities(float DeltaT) {
+    _velocities = (getPositions() - _previous_positions) / DeltaT;
+    setVelocities(_velocities);
+    _previous_positions = getPositions();
+}
+
 std::vector<std::unique_ptr<Constraint>> make_particle_particle_contact(ParticleList& pList) {
     std::vector<Particle>& particles = pList.getParticles();
     std::vector<std::unique_ptr<Constraint>> constraints;
     for (int i = 0; i < particles.size(); i++) {
+        constraints.push_back(std::make_unique<WallConstraint>(vec2(0,0), vec2(1,0), particles[i]));
+        constraints.push_back(std::make_unique<WallConstraint>(vec2(0,0), vec2(0,1), particles[i]));
+        constraints.push_back(std::make_unique<WallConstraint>(vec2(800,450), vec2(0,-1), particles[i]));
+        constraints.push_back(std::make_unique<WallConstraint>(vec2(800,450), vec2(-1,0), particles[i]));
         for (int j = i+1; j < particles.size(); j++) {
             Particle& p1 = particles[i];
             Particle& p2 = particles[j];
             constraints.push_back(std::make_unique<ParticleParticleCollisionConstraint>(p1, p2));
-
         }
     }
     return constraints;
 }
 
-void ParticleList::updateVelocities(float DeltaT) {
-    _velocities = (_positions - _previous_positions) / DeltaT;
-    _previous_positions = getPositions();
-}

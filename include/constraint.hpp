@@ -19,7 +19,7 @@ class Constraint {
 
         inline float getComplience() const { return complience; };
 
-    private:
+    protected:
         float complience = 0.0f;        // set to zero for hard constraints
 
 };

@@ -15,6 +15,7 @@ set(SOURCE_FILES
   src/Renderer.cpp
   src/ParticleParticleCollisionConstraint.cpp
   src/ConstraintSolver.cpp
+  src/WallConstraint.cpp
 )
 
 # set(CMAKE_BUILD_TYPE Release)

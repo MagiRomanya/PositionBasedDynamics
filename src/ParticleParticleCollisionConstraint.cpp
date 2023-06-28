@@ -8,10 +8,10 @@ ParticleParticleCollisionConstraint::ParticleParticleCollisionConstraint(Particl
     _jacobian.resize(_nDoF);
     _inv_mass = Eigen::MatrixXf::Zero(_nDoF, _nDoF);
 
-    _inv_mass(0,0) = _p1.getMass();
-    _inv_mass(1,1) = _p1.getMass();
-    _inv_mass(2,2) = _p2.getMass();
-    _inv_mass(3,3) = _p2.getMass();
+    _inv_mass(0,0) = 1.0f / _p1.getMass();
+    _inv_mass(1,1) = 1.0f / _p1.getMass();
+    _inv_mass(2,2) = 1.0f / _p2.getMass();
+    _inv_mass(3,3) = 1.0f / _p2.getMass();
 }
 
 
@@ -36,6 +36,7 @@ Eigen::VectorXf ParticleParticleCollisionConstraint::evaluateJacobian() {
     const vec2& pos2 = _p2.getPosition();
     float dist = distance(pos1, pos2);
     float c = dist - dist0;
+
     if (c >= 0) return Eigen::VectorXf::Zero(_nDoF);
     // If the particles are exactly at the same point we don't want the simulation to break
     const float EPSILON = 1e-5;

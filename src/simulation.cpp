@@ -2,6 +2,7 @@
 #include "ConstraintSolver.hpp"
 #include "SimpleIntegrator.hpp"
 #include "SimulationState.hpp"
+#include <iostream>
 #include <memory>
 #include <raylib.h>
 
@@ -14,8 +15,8 @@ Simulation::Simulation(std::unique_ptr<SimulationState> &state, std::unique_ptr<
 }
 
 void Simulation::iteration() {
-    const unsigned int SUBSTEPS = 8;
-    const float subDeltaT = _deltaT / 8;
+    const unsigned int SUBSTEPS = 1;
+    const float subDeltaT = _deltaT / SUBSTEPS;
     _integrator->setDeltaT(subDeltaT);
     _constraint_solver->setDeltaT(subDeltaT);
     for (int i = 0; i < SUBSTEPS; i++) {
@@ -26,6 +27,7 @@ void Simulation::iteration() {
         _constraint_solver->solve_constraints();
 
         // Calculate the new velocities based on new positions
+        _state->updateVelocities(subDeltaT);
     }
 };
 
