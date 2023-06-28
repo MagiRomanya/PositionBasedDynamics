@@ -9,7 +9,7 @@
 
 class ParticleList : public SimulationState {
     public:
-        ParticleList(std::vector<Particle> particles);
+        ParticleList(const std::vector<Particle>& particles);
 
         Eigen::VectorXf getPositions() override;
 

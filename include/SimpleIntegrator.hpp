@@ -6,6 +6,7 @@
 class SimpleIntegrator : public Integrator {
     public:
         SimpleIntegrator(float deltaT) { _deltaT = deltaT; }
+
         void integrate(SimulationState& state) override;
 
     private:

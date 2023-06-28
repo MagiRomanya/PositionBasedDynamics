@@ -15,13 +15,14 @@ Simulation::Simulation(std::unique_ptr<SimulationState> &state, std::unique_ptr<
 }
 
 void Simulation::iteration() {
-    const unsigned int SUBSTEPS = 1;
+    const unsigned int SUBSTEPS = 8;
     const float subDeltaT = _deltaT / SUBSTEPS;
     _integrator->setDeltaT(subDeltaT);
     _constraint_solver->setDeltaT(subDeltaT);
     for (int i = 0; i < SUBSTEPS; i++) {
         // Update positions and velocities
         _integrator->integrate(*_state);
+
 
         // Solve all constraints
         _constraint_solver->solve_constraints();
@@ -32,8 +33,10 @@ void Simulation::iteration() {
 };
 
 void Simulation::start() {
+    bool frame_by_frame = true;
     while (!WindowShouldClose()) {
-        if (IsKeyPressed(KEY_ENTER)) {
+        if (IsKeyPressed(KEY_SPACE)) frame_by_frame = !frame_by_frame;
+        if (!frame_by_frame or IsKeyPressed(KEY_ENTER)) {
             iteration();
         }
         // Render

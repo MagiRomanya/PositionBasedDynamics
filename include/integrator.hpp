@@ -14,7 +14,7 @@ class Integrator {
 
     protected:
         float _deltaT;
-        float _gravity = 9.8 * 0.0f;
+        float _gravity = 9.8f;
 };
 
 #endif // INTEGRATOR_H_

@@ -24,8 +24,9 @@ float ParticleParticleCollisionConstraint::evaluateConstraint() const {
     const vec2& pos2 = _p2.getPosition();
     const float dist = distance(pos1, pos2);
     float c = dist - dist0;
-    c = (c <= 0) ? c : 0;
+
     // Only apply the constraint if c < 0 (the particles are colliding)
+    c = (c <= 0) ? c : 0;
     return c;
 }
 

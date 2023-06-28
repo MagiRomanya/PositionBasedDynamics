@@ -4,9 +4,12 @@
 #include <raylib.h>
 #include "SimulationState.hpp"
 
+#define SCREEN_WIDTH 1600
+#define SCREEN_HEIGHT 1000
+
 class Renderer {
     public:
-        Renderer(int width=800, int height=450);
+        Renderer(int width=SCREEN_WIDTH, int height=SCREEN_HEIGHT);
 
         ~Renderer();
 

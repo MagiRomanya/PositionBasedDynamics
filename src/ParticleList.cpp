@@ -1,12 +1,13 @@
 #include "ParticleList.hpp"
 #include <memory>
 #include <vector>
+#include "Renderer.hpp"
 #include "constraint.hpp"
 #include "raylib.h"
 #include "ParticleParticleCollisionConstraint.hpp"
 #include "WallConstraint.hpp"
 
-ParticleList::ParticleList(std::vector<Particle> particles) {
+ParticleList::ParticleList(const std::vector<Particle>& particles) {
     _particles = particles;
     _previous_positions = getPositions();
 }
@@ -54,9 +55,9 @@ void ParticleList::setVelocities(const Eigen::VectorXf& vel) {
 Eigen::SparseMatrix<float> ParticleList::getMass() {
     _mass.resize(getDoF(), getDoF());
     _mass_triplets.clear();
-    for(int i = 0; i < getDoF(); i+=2) {
-        _mass_triplets.push_back(Eigen::Triplet<float>(i,i, _particles[i].getMass()));
-        _mass_triplets.push_back(Eigen::Triplet<float>(i+1, i+1, _particles[i].getMass()));
+    for(int i = 0; i < _particles.size(); i++) {
+        _mass_triplets.push_back(Eigen::Triplet<float>(2*i,2*i, _particles[i].getMass()));
+        _mass_triplets.push_back(Eigen::Triplet<float>(2*i+1, 2*i+1, _particles[i].getMass()));
     }
 
     _mass.setFromTriplets(_mass_triplets.begin(), _mass_triplets.end());
@@ -76,9 +77,9 @@ void ParticleList::render() const {
 Eigen::SparseMatrix<float> ParticleList::getInvMass() {
     _inv_mass.resize(getDoF(), getDoF());
     _inv_mass_triplets.clear();
-    for(int i = 0; i < getDoF(); i+=2) {
-        _inv_mass_triplets.push_back(Eigen::Triplet<float>(i,i, 1.0f / _particles[i].getMass()));
-        _inv_mass_triplets.push_back(Eigen::Triplet<float>(i+1, i+1, 1.0f / _particles[i].getMass()));
+    for(int i = 0; i < _particles.size(); i++) {
+        _inv_mass_triplets.push_back(Eigen::Triplet<float>(2*i,2*i, 1.0f / _particles[i].getMass()));
+        _inv_mass_triplets.push_back(Eigen::Triplet<float>(2*i+1, 2*i+1, 1.0f / _particles[i].getMass()));
     }
 
     _inv_mass.setFromTriplets(_inv_mass_triplets.begin(), _inv_mass_triplets.end());
@@ -97,8 +98,8 @@ std::vector<std::unique_ptr<Constraint>> make_particle_particle_contact(Particle
     for (int i = 0; i < particles.size(); i++) {
         constraints.push_back(std::make_unique<WallConstraint>(vec2(0,0), vec2(1,0), particles[i]));
         constraints.push_back(std::make_unique<WallConstraint>(vec2(0,0), vec2(0,1), particles[i]));
-        constraints.push_back(std::make_unique<WallConstraint>(vec2(800,450), vec2(0,-1), particles[i]));
-        constraints.push_back(std::make_unique<WallConstraint>(vec2(800,450), vec2(-1,0), particles[i]));
+        constraints.push_back(std::make_unique<WallConstraint>(vec2(SCREEN_WIDTH,SCREEN_HEIGHT), vec2(0,-1), particles[i]));
+        constraints.push_back(std::make_unique<WallConstraint>(vec2(SCREEN_WIDTH,SCREEN_HEIGHT), vec2(-1,0), particles[i]));
         for (int j = i+1; j < particles.size(); j++) {
             Particle& p1 = particles[i];
             Particle& p2 = particles[j];
