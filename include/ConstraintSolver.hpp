@@ -11,6 +11,8 @@ class ConstraintSolver {
 
         void solve_constraints();
 
+        inline void setDeltaT(float DeltaT) {_deltaT = DeltaT; }
+
     private:
         void solve(Constraint& constraint);
 

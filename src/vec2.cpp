@@ -27,7 +27,7 @@ vec2 operator+(const vec2 &v1, const vec2 &v2){
 }
 
 vec2 operator/(const vec2 &v, const float s) {
-    return v * 1.0f / s;
+    return v * (1.0f / s);
 }
 
 vec2 operator-(const vec2 &v1, const vec2 &v2) {

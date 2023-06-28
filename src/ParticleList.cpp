@@ -1,6 +1,10 @@
 #include "ParticleList.hpp"
 #include <eigen3/Eigen/src/SparseCore/SparseUtil.h>
+#include <memory>
+#include <vector>
+#include "constraint.hpp"
 #include "raylib.h"
+#include "ParticleParticleCollisionConstraint.hpp"
 
 ParticleList::ParticleList(std::vector<Particle> particles) {
     _particles = particles;
@@ -79,4 +83,18 @@ Eigen::SparseMatrix<float> ParticleList::getInvMass() {
 
     _inv_mass.setFromTriplets(_inv_mass_triplets.begin(), _inv_mass_triplets.end());
     return _inv_mass;
+}
+
+std::vector<std::unique_ptr<Constraint>> make_particle_particle_contact(ParticleList& pList) {
+    std::vector<Particle>& particles = pList.getParticles();
+    std::vector<std::unique_ptr<Constraint>> constraints;
+    for (int i = 0; i < particles.size(); i++) {
+        for (int j = i+1; j < particles.size(); j++) {
+            Particle& p1 = particles[i];
+            Particle& p2 = particles[j];
+            constraints.push_back(std::make_unique<ParticleParticleCollisionConstraint>(p1, p2));
+
+        }
+    }
+    return constraints;
 }

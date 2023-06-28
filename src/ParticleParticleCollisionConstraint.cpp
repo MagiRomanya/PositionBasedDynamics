@@ -1,5 +1,6 @@
 #include "ParticleParticleCollisionConstraint.hpp"
 #include "vec2.hpp"
+#include <eigen3/Eigen/src/Core/Matrix.h>
 
 ParticleParticleCollisionConstraint::ParticleParticleCollisionConstraint(Particle &p1, Particle &p2)
     : _p1(p1), _p2(p2)
@@ -21,17 +22,31 @@ float ParticleParticleCollisionConstraint::evaluateConstraint() const {
 
     const vec2& pos1 = _p1.getPosition();
     const vec2& pos2 = _p2.getPosition();
-    const float dist2 = distance2(pos1, pos2);
-
-    return dist2 - dist0*dist0;
+    const float dist = distance(pos1, pos2);
+    float c = dist - dist0;
+    c = (c <= 0) ? c : 0;
+    // Only apply the constraint if c < 0 (the particles are colliding)
+    return c;
 }
 
 Eigen::VectorXf ParticleParticleCollisionConstraint::evaluateJacobian() {
-    const vec2& pos1 = _p1.getPosition();
+    const float dist0 = _p1.getRadius() + _p2.getRadius();
+
+    vec2 pos1 = _p1.getPosition();
     const vec2& pos2 = _p2.getPosition();
+    float dist = distance(pos1, pos2);
+    float c = dist - dist0;
+    if (c >= 0) return Eigen::VectorXf::Zero(_nDoF);
+    // If the particles are exactly at the same point we don't want the simulation to break
+    const float EPSILON = 1e-5;
+    vec2 v_eps = vec2(EPSILON, 0.0f);
+    if (dist <1e-6) {
+        dist = EPSILON;
+        pos1 +=v_eps;
+    }
 
     // 1st particle
-    vec2 j1 = 2.0f * (pos1 - pos2);
+    vec2 j1 = (pos1 - pos2) / dist;
     _jacobian[0] = j1.x();
     _jacobian[1] = j1.y();
 
@@ -48,8 +63,8 @@ void ParticleParticleCollisionConstraint::updateSystem(const Eigen::VectorXf& de
         std::cerr << "ERROR::PARTICLE_PARTICLE_COLLISION_CONSTRAINT::UPDATE_SYSTEM: deltax does not match dimensionality " << deltax.size() << std::endl;
         exit(-1);
     }
-    _p1.setPosition( _p1.getPosition() + vec2(deltax[0], deltax[1]) );
-    _p2.setPosition( _p2.getPosition() + vec2(deltax[2], deltax[4]) );
+    _p1.setPosition( _p1.getPosition() + vec2(deltax[0], deltax[1]));
+    _p2.setPosition( _p2.getPosition() + vec2(deltax[2], deltax[3]));
 }
 
 Eigen::MatrixXf ParticleParticleCollisionConstraint::getInvMass() {

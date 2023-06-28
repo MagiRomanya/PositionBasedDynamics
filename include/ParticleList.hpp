@@ -3,7 +3,9 @@
 
 #include "SimulationState.hpp"
 #include "particle.hpp"
+#include <memory>
 #include <vector>
+#include <constraint.hpp>
 
 class ParticleList : public SimulationState {
     public:
@@ -19,15 +21,19 @@ class ParticleList : public SimulationState {
 
         Eigen::SparseMatrix<float> getMass() override;
 
-        virtual Eigen::SparseMatrix<float> getInvMass() override;
+        Eigen::SparseMatrix<float> getInvMass() override;
 
         unsigned int getDoF() const override;
 
         void render() const override;
 
+        inline std::vector<Particle>& getParticles() { return _particles; }
+
     private:
         std::vector<Particle> _particles;
 
 };
+
+std::vector<std::unique_ptr<Constraint>> make_particle_particle_contact(ParticleList& pList);
 
 #endif // PARTICLELIST_H_
