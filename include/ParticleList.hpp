@@ -23,6 +23,8 @@ class ParticleList : public SimulationState {
 
         Eigen::SparseMatrix<float> getInvMass() override;
 
+        void updateVelocities(float DeltaT) override;
+
         unsigned int getDoF() const override;
 
         void render() const override;

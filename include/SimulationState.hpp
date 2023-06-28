@@ -21,9 +21,12 @@ class SimulationState {
 
         virtual unsigned int getDoF() const = 0;
 
+        virtual void updateVelocities(float DeltaT) = 0;
+
         virtual void render() const = 0;
 
     protected:
+
         Eigen::SparseMatrix<float> _mass;
         Eigen::SparseMatrix<float> _inv_mass;
         Eigen::VectorXf _positions;

@@ -10,6 +10,8 @@ class Integrator {
     public:
         virtual void integrate(SimulationState& state) = 0;
 
+        inline void setDeltaT(float DeltaT) { _deltaT = DeltaT; }
+
     protected:
         float _deltaT;
         float _gravity = 9.8 * 0.0f;

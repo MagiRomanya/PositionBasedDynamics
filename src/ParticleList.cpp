@@ -1,5 +1,4 @@
 #include "ParticleList.hpp"
-#include <eigen3/Eigen/src/SparseCore/SparseUtil.h>
 #include <memory>
 #include <vector>
 #include "constraint.hpp"
@@ -8,6 +7,7 @@
 
 ParticleList::ParticleList(std::vector<Particle> particles) {
     _particles = particles;
+    _previous_positions = getPositions();
 }
 
 unsigned int ParticleList::getDoF() const {
@@ -37,7 +37,6 @@ Eigen::VectorXf ParticleList::getVelocities() {
 }
 
 void ParticleList::setPositions(const Eigen::VectorXf& pos) {
-    _previous_positions = _positions;
     _positions = pos;
     for (int i = 0; i < _particles.size(); i++) {
         _particles[i].setPosition(vec2(_positions[2*i], _positions[2*i+1]));
@@ -97,4 +96,9 @@ std::vector<std::unique_ptr<Constraint>> make_particle_particle_contact(Particle
         }
     }
     return constraints;
+}
+
+void ParticleList::updateVelocities(float DeltaT) {
+    _velocities = (_positions - _previous_positions) / DeltaT;
+    _previous_positions = getPositions();
 }
