@@ -9,7 +9,7 @@
 
 class ParticleList : public SimulationState {
     public:
-        ParticleList(const std::vector<Particle>& particles);
+        ParticleList(std::vector<std::unique_ptr<Particle>>& particles);
 
         Eigen::VectorXf getPositions() override;
 
@@ -29,10 +29,10 @@ class ParticleList : public SimulationState {
 
         void render() const override;
 
-        inline std::vector<Particle>& getParticles() { return _particles; }
+        inline std::vector<std::unique_ptr<Particle>>& getParticles() { return _particles; }
 
     private:
-        std::vector<Particle> _particles;
+        std::vector<std::unique_ptr<Particle>> _particles;
 
 };
 

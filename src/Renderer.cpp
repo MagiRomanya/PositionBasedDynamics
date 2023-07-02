@@ -18,6 +18,6 @@ void Renderer::Initialize() {
 
 
 void Renderer::draw(const SimulationState& state) {
-    ClearBackground(RAYWHITE);
+    ClearBackground(DARKGRAY);
     state.render();
 }

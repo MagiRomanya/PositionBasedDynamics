@@ -3,6 +3,7 @@
 
 #include <memory> // unique ptr
 
+#include "CollisionAcceleration.hpp"
 #include "ConstraintSolver.hpp"
 #include "SimulationState.hpp"
 #include "integrator.hpp"
@@ -10,7 +11,10 @@
 
 class Simulation {
     public:
-        Simulation(std::unique_ptr<SimulationState>& state, std::unique_ptr<ConstraintSolver>& c_solver, float deltaT=0.1f);
+        Simulation(std::unique_ptr<SimulationState>& state,
+                   std::unique_ptr<ConstraintSolver>& c_solver,
+                   std::unique_ptr<CollisionAcceleration>& accelerator,
+                   float deltaT=0.1f);
 
         void start();
 
@@ -23,6 +27,7 @@ class Simulation {
         std::unique_ptr<Integrator> _integrator;
         std::unique_ptr<Renderer> _renderer;
         std::unique_ptr<ConstraintSolver> _constraint_solver;
+        std::unique_ptr<CollisionAcceleration> _collision_acceleration;
 };
 
 #endif // SIMULATION_H_

@@ -11,11 +11,11 @@ class ConstraintSolver {
 
         void solve_constraints();
 
+        void solve(Constraint& constraint);
+
         inline void setDeltaT(float DeltaT) {_deltaT = DeltaT; }
 
     private:
-        void solve(Constraint& constraint);
-
         float _deltaT;
 
         std::vector<std::unique_ptr<Constraint>> _constraints;

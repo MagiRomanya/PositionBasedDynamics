@@ -3,9 +3,11 @@
 
 #include "vec2.hpp"
 
+#define PARTICLE_DIAMETER 20.0f
+
 class Particle {
     public:
-        Particle(vec2 x0, vec2 v0, float mass=1.0f, float radius=10.0f);
+        Particle(vec2 x0, vec2 v0, float mass=1.0f, float radius=PARTICLE_DIAMETER / 2.0f);
 
         inline vec2 getPosition() const { return position; };
 
@@ -18,6 +20,8 @@ class Particle {
         inline float getMass() const {return mass; }
 
         inline float getRadius() const {return radius; }
+
+        bool collidesWith(const Particle& p);
 
     private:
         float radius;
